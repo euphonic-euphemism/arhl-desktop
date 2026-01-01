@@ -272,14 +272,29 @@ const App = () => {
 
     const patientPTAs = useMemo(() => {
         const getVal = (f) => patientThresholds[f] !== "" ? parseFloat(patientThresholds[f]) : null;
-        const f500 = getVal(500), f1000 = getVal(1000), f2000 = getVal(2000), f3000 = getVal(3000), f4000 = getVal(4000);
+        const f500 = getVal(500), f1000 = getVal(1000), f2000 = getVal(2000), f3000 = getVal(3000), f4000 = getVal(4000), f6000 = getVal(6000);
 
         const pta5123 = (f500 !== null && f1000 !== null && f2000 !== null && f3000 !== null)
         ? (f500 + f1000 + f2000 + f3000) / 4 : null;
         const pta234 = (f2000 !== null && f3000 !== null && f4000 !== null)
         ? (f2000 + f3000 + f4000) / 3 : null;
 
-        return { pta5123, pta234 };
+        // PTA: Pure-tone average for 500, 1000, 2000 Hz
+        const PTA = (f500 !== null && f1000 !== null && f2000 !== null)
+        ? (f500 + f1000 + f2000) / 3 : null;
+        // HFPTA: High-frequency pure-tone average for 3000, 4000, 6000 Hz
+        const HFPTA = (f3000 !== null && f4000 !== null && f6000 !== null)
+        ? (f3000 + f4000 + f6000) / 3 : null;
+
+        // Adult, Desensitized SII (Calculated)
+        const adultSII = (PTA !== null && HFPTA !== null)
+        ? -0.012 * PTA - 0.006 * HFPTA + 1.311 : null;
+
+        // Adult, NAL-NL2, Desensitized SII (Calculated)
+        const adultNALSII = (PTA !== null && HFPTA !== null)
+        ? -0.008 * PTA - 0.005 * HFPTA + 1.294 : null;
+
+        return { pta5123, pta234, PTA, HFPTA, adultSII, adultNALSII };
     }, [patientThresholds]);
 
     const results = useMemo(() => {
@@ -401,6 +416,36 @@ const App = () => {
         <MetricCard title="PTA 5123 (Speech)" median={results.pta5123.median} p95={results.pta5123.p95} actual={patientPTAs.pta5123} />
         <MetricCard title="PTA 234 (OSHA STS)" median={results.pta234.median} p95={results.pta234.p95} actual={patientPTAs.pta234} />
         </div>
+
+        {patientPTAs.adultSII !== null && (
+            <div className="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-2xl p-6 border-2 border-purple-200 dark:border-purple-800 shadow-lg">
+            <div className="flex items-center gap-3 mb-3">
+            <BarChart3 className="text-purple-600 dark:text-purple-400" size={20} />
+            <h3 className="text-[10px] font-black text-purple-900 dark:text-purple-300 uppercase tracking-widest">Adult, Desensitized SII (Calculated)</h3>
+            </div>
+            <div className="text-4xl font-black text-purple-600 dark:text-purple-400">
+            {patientPTAs.adultSII.toFixed(3)}
+            </div>
+            <p className="text-[9px] text-purple-700 dark:text-purple-300 mt-2 font-medium">
+            Based on PTA (500-2k Hz) and HFPTA (3-6k Hz)
+        {patientPTAs.adultNALSII !== null && (
+            <div className="bg-gradient-to-br from-teal-50 to-cyan-50 dark:from-teal-900/20 dark:to-cyan-900/20 rounded-2xl p-6 border-2 border-teal-200 dark:border-teal-800 shadow-lg">
+            <div className="flex items-center gap-3 mb-3">
+            <BarChart3 className="text-teal-600 dark:text-teal-400" size={20} />
+            <h3 className="text-[10px] font-black text-teal-900 dark:text-teal-300 uppercase tracking-widest">Adult, NAL-NL2, Desensitized SII (Calculated)</h3>
+            </div>
+            <div className="text-4xl font-black text-teal-600 dark:text-teal-400">
+            {patientPTAs.adultNALSII.toFixed(3)}
+            </div>
+            <p className="text-[9px] text-teal-700 dark:text-teal-300 mt-2 font-medium">
+            Based on PTA (500-2k Hz) and HFPTA (3-6k Hz)
+            </p>
+            </div>
+        )}
+
+            </p>
+            </div>
+        )}
 
         <FrequencyGraph sex={sex} age={age} patientThresholds={patientThresholds} />
 
