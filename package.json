@@ -15,7 +15,7 @@
   },
   "build": {
     "appId": "com.arhl.calculator",
-    "productName": "ARHL Calculator",
+    "productName": "ARHL-Calculator",
     "directories": {
       "output": "dist-electron"
     },
