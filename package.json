@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Age-Related Hearing Loss Clinical Calculator based on NHANES data",
   "author": "Your Name <your.email@example.com>",
-  "main": "electron/main.js",
+  "main": "electron/main.cjs",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
