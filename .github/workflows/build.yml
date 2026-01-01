@@ -32,17 +32,17 @@ jobs:
     # LINUX BUILD
     - name: Build Linux (Deb/AppImage)
       if: matrix.os == 'ubuntu-latest'
-      run: npm run electron:build -- --linux
+      run: npm run electron:build -- --linux --publish never
 
     # WINDOWS BUILD
     - name: Build Windows (Exe)
       if: matrix.os == 'windows-latest'
-      run: npm run electron:build -- --win
+      run: npm run electron:build -- --win --publish never
 
     # MAC BUILD
     - name: Build Mac (Dmg)
       if: matrix.os == 'macos-latest'
-      run: npm run electron:build -- --mac
+      run: npm run electron:build -- --mac --publish never
 
     # UPLOAD ARTIFACTS
     - name: Upload Artifacts
