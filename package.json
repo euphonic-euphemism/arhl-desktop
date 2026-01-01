@@ -23,6 +23,11 @@
       "dist/**/*",
       "electron/**/*"
     ],
+    "publish": {
+      "provider": "github",
+      "owner": "euphonic-euphemism",
+      "repo": "arhl-desktop"
+    },
     "linux": {
       "target": [
         "AppImage",
