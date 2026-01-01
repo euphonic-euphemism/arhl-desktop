@@ -1,0 +1,16 @@
+/* This file injects Tailwind's base styles, component classes, and utility classes.
+ * It is imported by src/main.jsx to apply styling globally.
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Optional: Set a default background color for the body
+ * to match the app's theme (Slate-50 for light, Slate-950 for dark).
+ */
+body {
+    @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100;
+    margin: 0;
+    min-height: 100vh;
+}
